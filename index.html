@@ -107,6 +107,7 @@
                 width: 100%;  
             }
             .item-cost-input {
+                background-color: blue;
                 width: 100%;
                 display: grid;
                 grid-template-columns: 58% 23% 12.2%;
@@ -209,7 +210,7 @@
                 margin-right: 48px
             }
             .input-total-cost {
-                width: 75px;
+                width: 120px;
                 outline: none;
                 border: none;
                 border-radius: 15px;
@@ -228,6 +229,9 @@
                 .total-balance-label, .total-balance {
                     font-size: 18px;
                 }
+            }
+            .item-input-placeholder::placeholder {
+                font-size: 17px;
             }
         </style>
     </head>
@@ -275,20 +279,20 @@
                                 </div>
                             </div>
 
-                            <div class="div-item-cost-input">
+                            <div class="item-cost-input div-item-cost-input js-div-item-cost-input">
                             </div>
                         </div>
                         
                         <div class="div-input-total-cost">
                             <span class="total-cost">Total cost:</span>
-                            <input type="text" placeholder="Total cost" class="input-total-cost">
+                            <input type="text" placeholder="Total cost" class="input-total-cost  js-input-total-cost">
                         </div>
                         <div class="div-calculate-button">
-                            <button class="calculate-button">Calculate</button>
+                            <button class="calculate-button js-calculate-button">Calculate</button>
                         </div>
                         <div class="div-total">
                             <div class="total-balance-label">Total balance: 
-                             <span class="total-balance">$50</span>
+                             <span class="total-balance js-total-balance"></span>
                             </div>
                         </div>
                     </div>
