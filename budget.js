@@ -39,24 +39,81 @@ function renderBudgetPage() {
         
     });
 
-    let inputGrid = null;
+    document.querySelector('.div-item-cost-input').innerHTML = `
+        <input type="text" placeholder="items" class="item-input js-item-input">
+        <input type="text" placeholder="cost" class="item-cost js-item-cost" value="${currency}">
+        <button class="item-delete-button">Delete</button>
+    `; 
 
+    document.querySelectorAll('.js-item-cost').forEach((cost) => {
+
+        cost.addEventListener('keydown', (event) => {
+            let totalCostOnclick = 0;
+
+            if (event.key === 'Enter') {
+                document.querySelectorAll('.js-item-cost').forEach((costValue) => {
+                    const totalCost = calculate(costValue.value);
+
+                    totalCostOnclick += totalCost;
+                });
+
+                costDisplay(totalCostOnclick);
+            };
+        });
+    });
+    
     document.querySelector('.js-add-button').addEventListener('click', () => {
-        if (inputGrid === null) {
-            inputGrid = [];
+        renderIncomeCost();
+        deleteButton();
+    });
+    
+};
 
-            inputGrid.push({
-                input: `<input type="text" placeholder="items" class="item-input js-item-input">`,
-                cost: `<input type="text" placeholder="cost" class="item-cost js-item-cost">`,
-                button: `<button class="item-delete-button">Delete</button>`
-            });
+renderBudgetPage();
 
-            display(inputGrid);
+function renderIncomeCost() {
+    const costEnteredValue = [];
+    const inputEnteredValue = [];
+    let calculateCost = 0;
 
-        } else if (inputGrid !== null) {
+    document.querySelectorAll('.js-item-input').forEach((input) => {
+        inputEnteredValue.push(input.value);
+    });
+
+    document.querySelectorAll('.js-item-cost').forEach((cost) => {
+        costEnteredValue.push(cost.value);
+
+        const costConverted = calculate(cost.value);
+        calculateCost += costConverted;
+    });
+
+    costDisplay(calculateCost);
+
+    const inputGrid2 = [];
+
+    for (let i = 0; i < costEnteredValue.length; i++) {
+        inputGrid2.push({
+            input: `<input type="text" class="item-input js-item-input item-input-placeholder" placeholder="items" value="${inputEnteredValue[i]}">`,
+            cost: `<input type="text" class="item-cost js-item-cost" value=${costEnteredValue[i]}>`,
+            button: `<button class="item-delete-button">Delete</button>`
+        });
+    };
+
+    inputGrid2.push({
+        input: `<input type="text" placeholder="items" class="item-input js-item-input">`,
+        cost: `<input type="text" placeholder="cost" class="item-cost js-item-cost">`,
+        button: `<button class="item-delete-button">Delete</button>`
+    });
+
+
+    display(inputGrid2);
+};
+
+function deleteButton() {
+    document.querySelectorAll('.item-delete-button').forEach((delButton, index) => {
+        delButton.addEventListener('click', () => {
             const costEnteredValue = [];
             const inputEnteredValue = [];
-            let calculateCost = 0;
 
             document.querySelectorAll('.js-item-input').forEach((input) => {
                 inputEnteredValue.push(input.value);
@@ -64,36 +121,42 @@ function renderBudgetPage() {
 
             document.querySelectorAll('.js-item-cost').forEach((cost) => {
                 costEnteredValue.push(cost.value);
-
-                const costConverted = calculate(cost.value);
-                calculateCost += costConverted;
             });
 
-            costDisplay(calculateCost);
+            costEnteredValue.splice(index, 1);
+            inputEnteredValue.splice(index, 1);
+            
+            let calculateCost = 0;
 
-            const inputGrid2 = [];
+            costEnteredValue.forEach((item) => {
+                const costNoCurrency = calculate(item);
+                calculateCost += costNoCurrency;
+            });
+
+            const inputGrid3 = [];
 
             for (let i = 0; i < costEnteredValue.length; i++) {
-                inputGrid2.push({
+                inputGrid3.push({
                     input: `<input type="text" class="item-input js-item-input item-input-placeholder" placeholder="items" value="${inputEnteredValue[i]}">`,
                     cost: `<input type="text" class="item-cost js-item-cost" value=${costEnteredValue[i]}>`,
                     button: `<button class="item-delete-button">Delete</button>`
                 });
-            };
+            }
+            
+            display(inputGrid3);
 
-            inputGrid2.push({
-                input: `<input type="text" placeholder="items" class="item-input js-item-input">`,
-                cost: `<input type="text" placeholder="cost" class="item-cost       js-item-cost">`,
-                button: `<button class="item-delete-button">Delete</button>`
-            });
+            const currency = document.querySelector('.js-currency').value;
 
+            costValue(currency);
 
-            display(inputGrid2);
-        };
+            costDisplay(calculateCost);
 
+            deleteButton();
+            
+        });
     });
 };
-renderBudgetPage();
+deleteButton();
 
 function display(inputParam) {
     let itemInput = '';
@@ -113,28 +176,6 @@ function display(inputParam) {
     const currency = document.querySelector('.js-currency').value;
 
     costValue(currency);
-
-    document.querySelectorAll('.item-delete-button').forEach((delButton, index) => {
-        delButton.addEventListener('click', () => {
-            inputParam.splice(index, 1);
-
-            display(inputParam);
-
-            const currency = document.querySelector('.js-currency').value;
-
-            costValue(currency);
-
-            let totalCostCent = 0;
-
-            document.querySelectorAll('.js-item-cost').forEach((cost) => {
-                const totalCost = calculate(cost.value);
-                totalCostCent += totalCost;
-            });
-
-            costDisplay(totalCostCent);
-            
-        });
-    });
 };
 
 function calculate(costValue) {
@@ -146,11 +187,11 @@ function calculate(costValue) {
 function costDisplay(calculateCost) {
     const costToCurrency = (calculateCost / 100);
 
-    costToCurrency.toFixed(2);
+    const costToFixed = costToCurrency.toFixed(2);
 
     const currency = document.querySelector('.js-currency').value;
 
-    document.querySelector('.js-input-total-cost').value = currency + costToCurrency;
+    document.querySelector('.js-input-total-cost').value = currency + costToFixed;
 };
 
 function totalBalance() {
@@ -186,6 +227,23 @@ function totalBalance() {
 };
 totalBalance();
 
-document.querySelectorAll('.js-item-cost').forEach((cost) => {
-    cost.addEventListener('click', () => {})
+
+document.querySelector('.js-add-button').addEventListener('click', () => {
+    
+    document.querySelectorAll('.js-item-cost').forEach((cost) => {
+
+        cost.addEventListener('keydown', (event) => {
+            let totalCostOnclick = 0;
+
+            if (event.key === 'Enter') {
+                document.querySelectorAll('.js-item-cost').forEach((costValue) => {
+                    const totalCost = calculate(costValue.value);
+
+                    totalCostOnclick += totalCost;
+                });
+
+                costDisplay(totalCostOnclick);
+            };
+        });
+    });
 });
